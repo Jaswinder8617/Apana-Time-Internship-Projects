@@ -1,0 +1,224 @@
+SQL> SET LINES 100 PAGES 100;
+SQL> SELECT * FROM EMP;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO               
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------               
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20               
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30               
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30               
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20               
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30               
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30               
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10               
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20               
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10               
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30               
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20               
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30               
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20               
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10               
+
+14 rows selected.
+
+SQL> SELECT COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB!='PRESIDENT'
+  4  GROUP BY DEPTNO;
+
+  COUNT(*)                                                                                          
+----------                                                                                          
+         6                                                                                          
+         5                                                                                          
+         2                                                                                          
+
+SQL> SELECT DEPTNO , COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB!='PRESIDENT'
+  4  GROUP BY DEPTNO.
+  5  
+SQL> SELECT DEPTNO, COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB='PRESIDENT'
+  4  GROUP BY DEPTNO;
+
+    DEPTNO   COUNT(*)                                                                               
+---------- ----------                                                                               
+        10          1                                                                               
+
+SQL> SELECT DEPTNO, COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB!='PRESIDENT'
+  4  GROUP BY DEPTNO;
+
+    DEPTNO   COUNT(*)                                                                               
+---------- ----------                                                                               
+        30          6                                                                               
+        20          5                                                                               
+        10          2                                                                               
+
+SQL> SELECT SUM(SAL),ENAME
+  2  FROM EMP
+  3  
+SQL> SELECT SUM(SAL),JOB
+  2  FROM EMP
+  3  GROUP BY JOB;
+
+  SUM(SAL) JOB                                                                                      
+---------- ---------                                                                                
+      4150 CLERK                                                                                    
+      5600 SALESMAN                                                                                 
+      5000 PRESIDENT                                                                                
+      8275 MANAGER                                                                                  
+      6000 ANALYST                                                                                  
+
+SQL> SELECT COUNT(JOB)
+  2  FROM EMP
+  3  WHERE JOB='MANAGER'
+  4  GROUP BY JOB;
+
+COUNT(JOB)                                                                                          
+----------                                                                                          
+         3                                                                                          
+
+SQL> SELECT JOB, COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB='MANAGER';
+SELECT JOB, COUNT(*)
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function 
+
+
+SQL> SELECT JOB,COUNT(*)
+  2  FROM EMP
+  3  WHEREJOB='MANAGER'
+  4  GROUP BY JOB;
+WHEREJOB='MANAGER'
+        *
+ERROR at line 3:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> SELECT JOB,COUNT(*)
+  2  FROM EMP
+  3  WHERE JOB='MANAGER'
+  4  GROUP BY JOB;
+
+JOB         COUNT(*)                                                                                
+--------- ----------                                                                                
+MANAGER            3                                                                                
+
+SQL> SELECT AV(SAL),COUNT(*)
+  2  FROM EMP
+  3  WHERE DEPTNO!=20
+  4  GROUP BY DEPTNO;
+SELECT AV(SAL),COUNT(*)
+       *
+ERROR at line 1:
+ORA-00904: "AV": invalid identifier 
+
+
+SQL> SELECT AVG(SAL), COUNT(*)
+  2  
+SQL> SELECT AVG(SAL),DEPTNO,COUNT(*)
+  2  FROM EMP
+  3  WHERE DEPTNO!=20
+  4  GROUP BY DEPTNO;
+
+  AVG(SAL)     DEPTNO   COUNT(*)                                                                    
+---------- ---------- ----------                                                                    
+1566.66667         30          6                                                                    
+2916.66667         10          3                                                                    
+
+SQL> SELECT COUNT(*), ENAME
+  2  FROM EMP
+  3  WHERE ENAME LIKE ='A%'
+  4  GROUP BY ENAME;
+WHERE ENAME LIKE ='A%'
+                 *
+ERROR at line 3:
+ORA-00936: missing expression 
+
+
+SQL> SELECT COUNT(*), ENAME
+  2  FROM EMP
+  3  WHERE ENAME LIKE 'A%'
+  4  GROUP BY ENAME;
+
+  COUNT(*) ENAME                                                                                    
+---------- ----------                                                                               
+         1 ALLEN                                                                                    
+         1 ADAMS                                                                                    
+
+SQL> SELECT COUNT(*), AUG(SAL),DEPTNO
+  2  FROM EMP
+  3  WHERE SAL<2000
+  4  GROUP BY DEPTNO;
+SELECT COUNT(*), AUG(SAL),DEPTNO
+                 *
+ERROR at line 1:
+ORA-00904: "AUG": invalid identifier 
+
+
+SQL> SELECT COUNT(*),AVG(SAL),DEPTNO
+  2  FROM EMP
+  3  WHEE SAL<2000
+  4  GROUP BY DEPTNO;
+WHEE SAL<2000
+     *
+ERROR at line 3:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> SELECT COUNT(*),AVG(SAL),DEPTNO
+  2  FROM EMP
+  3  WHERE SAL<2000
+  4  GROUP BY DEPTNO;
+
+  COUNT(*)   AVG(SAL)     DEPTNO                                                                    
+---------- ---------- ----------                                                                    
+         5       1310         30                                                                    
+         2        950         20                                                                    
+         1       1300         10                                                                    
+
+SQL> SELECT SUM(SAL),COUNT(*),DEPTNO
+  2  FROM EMP
+  3  WHERE JOB='SALESMAN'
+  4  GROUP BY DEPTNO;
+
+  SUM(SAL)   COUNT(*)     DEPTNO                                                                    
+---------- ---------- ----------                                                                    
+      5600          4         30                                                                    
+
+SQL> SELECT MAX(SAL) DEPTNO
+  2  FROM EMP
+  3  GROUP BY DEPTNO;
+
+    DEPTNO                                                                                          
+----------                                                                                          
+      2850                                                                                          
+      3000                                                                                          
+      5000                                                                                          
+
+SQL> SELECT COUNT(*),SAL
+  2  FROM EMP
+  3  GROUP BY SAL;
+
+  COUNT(*)        SAL                                                                               
+---------- ----------                                                                               
+         1       2450                                                                               
+         1       5000                                                                               
+         1       1300                                                                               
+         2       1250                                                                               
+         1       2850                                                                               
+         1       2975                                                                               
+         1       1100                                                                               
+         2       3000                                                                               
+         1        800                                                                               
+         1       1600                                                                               
+         1       1500                                                                               
+         1        950                                                                               
+
+12 rows selected.
+
+SQL> SPOOL OFF;
